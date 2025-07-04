@@ -1,8 +1,12 @@
 fn factorial(num: u64) -> u64 {
+    //NOTE:simply, create an iterator (1..num+1) and call product(), which just.... multiplies everything
+    //in the iterator..
+
+    (1..num+1).product()
+
     // TODO: Complete this function to return the factorial of `num` which is
     // defined as `1 * 2 * 3 * … * num`.
     // https://en.wikipedia.org/wiki/Factorial
-    //
     // Do not use:
     // - early returns (using the `return` keyword explicitly)
     // Try not to use:
