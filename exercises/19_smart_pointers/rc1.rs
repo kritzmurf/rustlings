@@ -30,6 +30,14 @@ fn main() {
     // You can optionally experiment here.
 }
 
+//NOTE: This test seems really easy to 'unga bunga', and if I hadn't read the chapter, I would've
+//had no idea what was going on. Rc::clone takes a constructed RC<T> (a reference counter) and
+//essentially attaches additional ownership to that object, incrementing an ownership count.
+//The Rust Book gives the best example when considering vertices and edges. Essentially, a vertice
+//shouldn't go 'out of scope' until there is no edge connected to it. So you need to track what and
+//how many 'edges' are connected. When an edge goes out of scope, Drop() automatically decrements
+//the counter and removes itself from the ownership list. When the strong_count() (value tracking
+//number of owners) drops to zero, the Rc value may safely go out of scope and get cleaned up.
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -60,17 +68,17 @@ mod tests {
         jupiter.details();
 
         // TODO
-        let saturn = Planet::Saturn(Rc::new(Sun));
+        let saturn = Planet::Saturn(Rc::clone(&sun));
         println!("reference count = {}", Rc::strong_count(&sun)); // 7 references
         saturn.details();
 
         // TODO
-        let uranus = Planet::Uranus(Rc::new(Sun));
+        let uranus = Planet::Uranus(Rc::clone(&sun));
         println!("reference count = {}", Rc::strong_count(&sun)); // 8 references
         uranus.details();
 
         // TODO
-        let neptune = Planet::Neptune(Rc::new(Sun));
+        let neptune = Planet::Neptune(Rc::clone(&sun));
         println!("reference count = {}", Rc::strong_count(&sun)); // 9 references
         neptune.details();
 
@@ -92,12 +100,15 @@ mod tests {
         println!("reference count = {}", Rc::strong_count(&sun)); // 4 references
 
         // TODO
+        drop(earth);
         println!("reference count = {}", Rc::strong_count(&sun)); // 3 references
 
         // TODO
+        drop(venus);
         println!("reference count = {}", Rc::strong_count(&sun)); // 2 references
 
         // TODO
+        drop(mercury);
         println!("reference count = {}", Rc::strong_count(&sun)); // 1 reference
 
         assert_eq!(Rc::strong_count(&sun), 1);
